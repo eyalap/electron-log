@@ -36,14 +36,18 @@ function concatFirstStringElements(data) {
 }
 
 function formatDate(template, date) {
+  var isUtc = template.replace('{utc}') !== template;
   return template
-    .replace('{y}', String(date.getFullYear()))
-    .replace('{m}', pad(date.getMonth() + 1))
-    .replace('{d}', pad(date.getDate()))
-    .replace('{h}', pad(date.getHours()))
-    .replace('{i}', pad(date.getMinutes()))
-    .replace('{s}', pad(date.getSeconds()))
-    .replace('{ms}', pad(date.getMilliseconds(), 3))
+    .replace('{y}', String(isUtc ? date.getUTCFullYear() : date.getFullYear()))
+    .replace('{m}', pad((isUtc ? date.getUTCMonth() : date.getMonth()) + 1))
+    .replace('{d}', pad(isUtc ? date.getUTCDate() : date.getDate()))
+    .replace('{h}', pad(isUtc ? date.getUTCHours() : date.getHours()))
+    .replace('{i}', pad(isUtc ? date.getUTCMinutes() : date.getMinutes()))
+    .replace('{s}', pad(isUtc ? date.getUTCSeconds() : date.getSeconds()))
+    .replace('{ms}', pad(isUtc
+      ? date.getUTCMilliseconds()
+      : date.getMilliseconds(), 3))
+    .replace('{utc}', '')
     .replace('{z}', formatTimeZone(date.getTimezoneOffset()))
     .replace('{iso}', date.toISOString());
 }
